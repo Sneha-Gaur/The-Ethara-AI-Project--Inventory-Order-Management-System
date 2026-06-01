@@ -20,7 +20,12 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> list[str]:
-        return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
+        origins = [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
+        if self.FRONTEND_URL:
+            url = self.FRONTEND_URL.rstrip("/")
+            if url not in origins:
+                origins.append(url)
+        return origins
 
     @property
     def is_sqlite(self) -> bool:
