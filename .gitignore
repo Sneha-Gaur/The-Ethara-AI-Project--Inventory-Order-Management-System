@@ -1,0 +1,53 @@
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+
+# Node
+node_modules/
+npm-debug.log*
+dist/
+build/
+
+# Database (local SQLite)
+*.db
+*.db-journal
+backend/inventory.db
+server/users.json
+
+# IDE & OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+postgres_data/
+
+# Logs & coverage
+*.log
+coverage/
+htmlcov/
+
+# Build artifacts
+frontend/dist/
+*.tsbuildinfo
+.cache/
+.vite/
+
+# Partial installs (if cleanup failed)
+frontend/node_modules/
+server/node_modules/

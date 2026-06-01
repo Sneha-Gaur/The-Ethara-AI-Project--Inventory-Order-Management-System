@@ -1,0 +1,79 @@
+/** SQLite schema aligned with SQLAlchemy models (backend/app/models). */
+export const SCHEMA_SQL = `
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  full_name VARCHAR(255) NOT NULL DEFAULT '',
+  role VARCHAR(20) NOT NULL DEFAULT 'staff',
+  is_active BOOLEAN NOT NULL DEFAULT 1,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS products (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name VARCHAR(255) NOT NULL,
+  sku VARCHAR(100) NOT NULL UNIQUE,
+  description TEXT,
+  price NUMERIC(12, 2) NOT NULL,
+  quantity INTEGER NOT NULL DEFAULT 0,
+  category VARCHAR(100) NOT NULL,
+  image_url VARCHAR(500),
+  is_featured BOOLEAN NOT NULL DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS customers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  full_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  phone VARCHAR(50) NOT NULL,
+  address VARCHAR(500) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  state VARCHAR(100) NOT NULL,
+  country VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id INTEGER NOT NULL REFERENCES customers(id),
+  total_amount NUMERIC(12, 2) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'Pending',
+  order_date DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id INTEGER NOT NULL REFERENCES products(id),
+  quantity INTEGER NOT NULL,
+  unit_price NUMERIC(12, 2) NOT NULL,
+  subtotal NUMERIC(12, 2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS inventory_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  product_id INTEGER NOT NULL REFERENCES products(id),
+  change_amount INTEGER NOT NULL,
+  previous_quantity INTEGER NOT NULL,
+  new_quantity INTEGER NOT NULL,
+  reason VARCHAR(255) NOT NULL,
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_products_sku ON products(sku);
+CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+`;
+
+export const MIGRATIONS_SQL = [
+  `ALTER TABLE users ADD COLUMN username VARCHAR(50)`,
+  `ALTER TABLE users ADD COLUMN full_name VARCHAR(255) DEFAULT ''`,
+  `ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'staff'`,
+  `ALTER TABLE users ADD COLUMN is_active BOOLEAN DEFAULT 1`,
+  `ALTER TABLE products ADD COLUMN is_featured BOOLEAN NOT NULL DEFAULT 0`,
+  `ALTER TABLE products ADD COLUMN image_url VARCHAR(500)`,
+];

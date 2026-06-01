@@ -1,0 +1,69 @@
+{
+  "info": {
+    "name": "Inventory Management API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": ["var j=pm.response.json(); if(j.access_token) pm.collectionVariables.set('token', j.access_token);"]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"admin@inventory.com\",\"password\":\"admin123\"}"
+            },
+            "url": "{{baseUrl}}/api/auth/login/json"
+          }
+        },
+        { "name": "Signup", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"test@test.com\",\"full_name\":\"Test\",\"password\":\"test123\",\"role\":\"staff\"}" }, "url": "{{baseUrl}}/api/auth/signup" } },
+        { "name": "Me", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/auth/me" } }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        { "name": "List Products", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/products?page=1" } },
+        { "name": "Create Product", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"name\":\"Test\",\"sku\":\"TST-99\",\"price\":19.99,\"quantity\":50,\"category\":\"Test\"}" }, "url": "{{baseUrl}}/api/products" } }
+      ]
+    },
+    {
+      "name": "Customers",
+      "item": [
+        { "name": "List Customers", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/customers" } }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        { "name": "Create Order", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"customer_id\":1,\"items\":[{\"product_id\":1,\"quantity\":1}]}" }, "url": "{{baseUrl}}/api/orders" } },
+        { "name": "List Orders", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/orders" } }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        { "name": "Dashboard", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/inventory/dashboard" } }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        { "name": "Summary", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/reports/summary" } }
+      ]
+    }
+  ]
+}
